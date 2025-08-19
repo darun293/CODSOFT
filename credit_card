@@ -1,0 +1,37 @@
+import pandas as pd
+
+# Load the dataset
+df = pd.read_csv('/content/creditcard.csv.zip')
+
+# Preview the data
+print(df.head())
+from sklearn.preprocessing import StandardScaler
+
+# Separate features and target
+X = df.drop('Class', axis=1)
+y = df['Class']
+
+# Scale the 'Amount' column (optional but recommended)
+scaler = StandardScaler()
+X['Amount'] = scaler.fit_transform(X['Amount'].values.reshape(-1, 1))
+from sklearn.model_selection import train_test_split
+
+# Split the data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42, stratify=y)
+from sklearn.linear_model import LogisticRegression
+
+# Initialize and train
+model = LogisticRegression(max_iter=1000)
+model.fit(X_train, y_train)
+from sklearn.metrics import classification_report, confusion_matrix
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print(confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+sns.countplot(x='Class', data=df)
+plt.title('Class Distribution')
+plt.show()
